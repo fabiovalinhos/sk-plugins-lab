@@ -1,10 +1,24 @@
 using Chat.WebBlazorServer.Components;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddHttpClient();
+
+// Add Semantic Kernel services
+builder.Services.AddSingleton<Kernel>(sp =>
+{
+    var builder = Kernel.CreateBuilder();
+    // Configure your AI service here (e.g., OpenAI, Azure OpenAI)
+    // builder.AddOpenAIChatCompletion("your-model-id", "your-api-key");
+    return builder.Build();
+});
+
+builder.Services.AddTransient<PromptExecutionSettings>(sp => new PromptExecutionSettings());
 
 var app = builder.Build();
 

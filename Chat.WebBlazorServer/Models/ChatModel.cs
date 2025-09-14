@@ -1,3 +1,5 @@
+using Microsoft.SemanticKernel.ChatCompletion;
+
 namespace Chat.WebBlazorServer.Models
 {
     public class ChatModel
