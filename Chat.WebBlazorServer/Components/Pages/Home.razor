@@ -28,9 +28,15 @@
 </div>
 
 @code {
+    // Need to inject IJSRuntime for interop
+    [Inject]
+    public required IJSRuntime JSRuntime { get; set; }
+
+
     private ChatModel chatModel = new ChatModel("You are a friendly AI chatbot that helps users answers questions. Always format response using markdown");
     private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
 
     protected override void OnInitialized()
     {
@@ -89,8 +95,4 @@
     {
         await JSRuntime.InvokeVoidAsync("scrollToBottom");
     }
-
-    // Need to inject IJSRuntime for interop
-    [Inject]
-    public required IJSRuntime JSRuntime { get; set; }
 }
