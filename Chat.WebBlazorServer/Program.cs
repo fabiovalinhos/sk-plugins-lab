@@ -14,20 +14,25 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 
-// Add Semantic Kernel services
+
+// Híbrido inútil
+///
 // builder.Services.AddSingleton<Kernel>(sp =>
 // {
 //     var builder = Kernel.CreateBuilder();
-//     // Configure your AI service here (e.g., OpenAI, Azure OpenAI)
 //     // builder.AddOpenAIChatCompletion("your-model-id", "your-api-key");
 //     return builder.Build();
 // });
 
+
+///
 builder.Services.AddKernel();
 
 var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
 var endpoint = config["AzureOpenAI:Endpoint"] ?? throw new ArgumentNullException("AzureOpenAI:Endpoint not found in configuration.");
 var apikey = config["AzureOpenAI:ApiKey"] ?? throw new ArgumentNullException("AzureOpenAI:ApiKey not found in configuration.");
+
+builder.Services.AddAzureOpenAIChatCompletion(modelid, endpoint, apikey);
 
 
 builder.Services.AddTransient<PromptExecutionSettings>(sp => new PromptExecutionSettings());
