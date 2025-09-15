@@ -1,6 +1,11 @@
 using Chat.WebBlazorServer.Components;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
+
+
+var config = new ConfigurationBuilder()
+.SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,13 +15,20 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 
 // Add Semantic Kernel services
-builder.Services.AddSingleton<Kernel>(sp =>
-{
-    var builder = Kernel.CreateBuilder();
-    // Configure your AI service here (e.g., OpenAI, Azure OpenAI)
-    // builder.AddOpenAIChatCompletion("your-model-id", "your-api-key");
-    return builder.Build();
-});
+// builder.Services.AddSingleton<Kernel>(sp =>
+// {
+//     var builder = Kernel.CreateBuilder();
+//     // Configure your AI service here (e.g., OpenAI, Azure OpenAI)
+//     // builder.AddOpenAIChatCompletion("your-model-id", "your-api-key");
+//     return builder.Build();
+// });
+
+builder.Services.AddKernel();
+
+var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
+var endpoint = config["AzureOpenAI:Endpoint"] ?? throw new ArgumentNullException("AzureOpenAI:Endpoint not found in configuration.");
+var apikey = config["AzureOpenAI:ApiKey"] ?? throw new ArgumentNullException("AzureOpenAI:ApiKey not found in configuration.");
+
 
 builder.Services.AddTransient<PromptExecutionSettings>(sp => new PromptExecutionSettings());
 
