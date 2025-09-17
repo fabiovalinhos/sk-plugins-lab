@@ -1,5 +1,6 @@
 using Chat.WebBlazorServer.Components;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 
 var config = new ConfigurationBuilder()
@@ -34,8 +35,17 @@ var apikey = config["AzureOpenAI:ApiKey"] ?? throw new ArgumentNullException("Az
 
 builder.Services.AddAzureOpenAIChatCompletion(modelid, endpoint, apikey);
 
+FunctionChoiceBehaviorOptions options = new()
+{
+    AllowConcurrentInvocation = false
+};
 
-builder.Services.AddTransient<PromptExecutionSettings>(sp => new PromptExecutionSettings());
+builder.Services.AddTransient<PromptExecutionSettings>(_ => new
+OpenAIPromptExecutionSettings
+{
+    Temperature = 0.7,
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(options: options),
+});
 
 var app = builder.Build();
 
@@ -48,6 +58,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthorization();
 
 
 app.UseAntiforgery();
