@@ -22,29 +22,39 @@ namespace Chat.WebBlazorServer.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Chat(
-            [FromForm] Chatmodel model,
-            [FromServices] Kernel kernel,
-            [FromServices] PromptExecutionSettings promptSettings
-        )
+                    [FromBody] Chatmodel model,
+                    [FromServices] IChatCompletionService chatService,
+                    [FromServices] Kernel kernel,
+                    [FromServices] PromptExecutionSettings promptSettings,
+                    CancellationToken cancellationToken
+                )
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
             {
-                var chatService = kernel.GetRequiredService<IChatCompletionService>();
                 model.ChatHistory.AddUserMessage(model.Prompt);
                 var history = new ChatHistory(model.ChatHistory);
+
+                // passando o kernel porque o método original exige
                 var response = await chatService.GetChatMessageContentAsync(
                     history,
                     promptSettings,
-                    kernel
+                    kernel,
+                    cancellationToken
                 );
 
                 model.ChatHistory.Add(response);
                 model.Prompt = string.Empty;
-                return PartialView("ChatHistoryPartialView", model);
+                return Ok(model);
             }
-
-            return BadRequest(ModelState);
+            catch (Exception ex)
+            {
+                // logar ex (ex: ILogger) antes de retornar
+                return StatusCode(500, "Erro ao comunicar com o serviço de IA.");
+            }
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
