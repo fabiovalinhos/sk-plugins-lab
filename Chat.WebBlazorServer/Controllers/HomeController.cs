@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 using Chat.WebBlazorServer.Models;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace Chat.WebBlazorServer.Controllers
 {
@@ -13,7 +15,7 @@ namespace Chat.WebBlazorServer.Controllers
         public IActionResult Index()
         {
             var model =
-            new Chatmodel(
+            new ChatModel(
                 systemMessage: "Você é uma AI amigável que ajuda os usuários com suas perguntas.Sempre responda em português e formate a resposta em markdown."
             );
 
@@ -22,7 +24,7 @@ namespace Chat.WebBlazorServer.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Chat(
-                    [FromBody] Chatmodel model,
+                    [FromBody] ChatModel model,
                     [FromServices] IChatCompletionService chatService,
                     [FromServices] Kernel kernel,
                     [FromServices] PromptExecutionSettings promptSettings,
@@ -51,7 +53,7 @@ namespace Chat.WebBlazorServer.Controllers
             catch (Exception ex)
             {
                 // logar ex (ex: ILogger) antes de retornar
-                return StatusCode(500, "Erro ao comunicar com o serviço de IA.");
+                return StatusCode(500, $"Erro ao comunicar com o serviço de IA. {ex.Message}");
             }
         }
 

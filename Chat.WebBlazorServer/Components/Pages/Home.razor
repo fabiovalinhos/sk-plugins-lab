@@ -1,9 +1,7 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using Chat.WebBlazorServer.Models
 @using Microsoft.SemanticKernel.ChatCompletion
-@inject HttpClient Http
-@inject NavigationManager Navigation
-@inject IJSRuntime JSRuntime
 
 <PageTitle>Semantic Kernel Chat</PageTitle>
 
@@ -13,6 +11,7 @@
 <div id="chatHistory" style="height: 65vh" class="history container border shadow rounded m-2 p-2">
     <ChatHistoryDisplay ChatHistory="@chatModel.ChatHistory" />
 </div>
+
 
 <div style="height: 15vh" class="container-fluid">
     <div class="row">
@@ -27,3 +26,4 @@
         </div>
     </div>
 </div>
+

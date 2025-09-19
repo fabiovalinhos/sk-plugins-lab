@@ -27,7 +27,7 @@ public partial class Home : ComponentBase
         // This is where you would typically initialize your chat model or load history
     }
 
-    private async Task HandleKeyDown(KeyboardEventArgs e)
+    public async Task HandleKeyDown(KeyboardEventArgs e)
     {
         if (e.CtrlKey && e.Key == "Enter")
         {
@@ -35,7 +35,7 @@ public partial class Home : ComponentBase
         }
     }
 
-    private async Task SubmitChat()
+    public async Task SubmitChat()
     {
         if (string.IsNullOrWhiteSpace(chatModel.Prompt))
         {
@@ -74,7 +74,7 @@ public partial class Home : ComponentBase
     }
 
     // JavaScript interop for scrolling
-    private async Task ScrollToBottom()
+    public async Task ScrollToBottom()
     {
         await JSRuntime.InvokeVoidAsync("scrollToBottom");
     }

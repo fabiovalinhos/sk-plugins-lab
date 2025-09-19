@@ -69,4 +69,8 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+
+    app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode(); // define globalmente InteractiveServer
+
 app.Run();
