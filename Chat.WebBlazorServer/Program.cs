@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
+builder.Services.AddControllers();
 
 
 // Híbrido inútil
@@ -61,6 +62,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+app.MapControllers();
 
 
 app.UseAntiforgery();
@@ -68,9 +70,5 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-
-    app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode(); // define globalmente InteractiveServer
 
 app.Run();

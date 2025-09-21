@@ -7,11 +7,13 @@ using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace Chat.WebBlazorServer.Controllers
 {
+    [Route("[controller]")]
     public class HomeController(ILogger<HomeController> logger) : Controller
     {
         private readonly ILogger<HomeController> _logger = logger;
 
-        [HttpGet]
+        // GET: /Home/Index
+        [HttpGet("[action]")]
         public IActionResult Index()
         {
             var model =
@@ -22,7 +24,8 @@ namespace Chat.WebBlazorServer.Controllers
             return View();
         }
 
-        [HttpPost]
+        // POST: /Home/Chat
+        [HttpPost("[action]")]
         public async Task<IActionResult> Chat(
                     [FromBody] ChatModel model,
                     [FromServices] IChatCompletionService chatService,
@@ -59,6 +62,7 @@ namespace Chat.WebBlazorServer.Controllers
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet("[action]")]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
