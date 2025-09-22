@@ -54,6 +54,7 @@ public partial class Home : ComponentBase
         // For now, let's simulate a response
         try
         {
+            // TODO: verificar se precisa mesmo do Navigation.ToAbsoluteUri
             var response = await Http.PostAsJsonAsync(Navigation.ToAbsoluteUri("/Home/Chat"), chatModel);
             response.EnsureSuccessStatusCode();
             var updatedChatModel = await response.Content.ReadFromJsonAsync<ChatModel>();
