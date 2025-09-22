@@ -46,22 +46,21 @@ public partial class Home : ComponentBase
         chatModel.ChatHistory.AddUserMessage(chatModel.Prompt);
         StateHasChanged(); // Update UI to show user's message
 
-        // Simulate AI response (replace with actual API call)
-        var userPrompt = chatModel.Prompt;
         chatModel.Prompt = string.Empty; // Clear prompt input
 
         // This would be an actual API call to your backend
         // For now, let's simulate a response
         try
         {
-            // TODO: verificar se precisa mesmo do Navigation.ToAbsoluteUri
+            //Navigation.ToAbsoluteUri garante que vai ser absoluto. nao tenho no Program.cs o client.baseaddress
             var response = await Http.PostAsJsonAsync(Navigation.ToAbsoluteUri("/Home/Chat"), chatModel);
+            
             response.EnsureSuccessStatusCode();
             var updatedChatModel = await response.Content.ReadFromJsonAsync<ChatModel>();
             if (updatedChatModel != null)
             {
                 chatModel.ChatHistory = updatedChatModel.ChatHistory;
-            }
+            } 
         }
         catch (Exception ex)
         {

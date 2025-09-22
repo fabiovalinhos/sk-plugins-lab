@@ -38,7 +38,6 @@ namespace Chat.WebBlazorServer.Controllers
 
             try
             {
-                model.ChatHistory.AddUserMessage(model.Prompt);
                 var history = new ChatHistory(model.ChatHistory);
 
                 // passando o kernel porque o método original exige
