@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 using Chat.WebBlazorServer.Models;
 using Microsoft.SemanticKernel;
@@ -11,18 +10,6 @@ namespace Chat.WebBlazorServer.Controllers
     public class HomeController(ILogger<HomeController> logger) : Controller
     {
         private readonly ILogger<HomeController> _logger = logger;
-
-        // GET: /Home/Index
-        [HttpGet("[action]")]
-        public IActionResult Index()
-        {
-            var model =
-            new ChatModel(
-                systemMessage: "Você é uma AI amigável que ajuda os usuários com suas perguntas.Sempre responda em português e formate a resposta em markdown."
-            );
-
-            return View();
-        }
 
         // POST: /Home/Chat
         [HttpPost("[action]")]
@@ -60,11 +47,5 @@ namespace Chat.WebBlazorServer.Controllers
         }
 
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        [HttpGet("[action]")]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

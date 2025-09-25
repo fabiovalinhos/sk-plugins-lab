@@ -2,7 +2,6 @@ using Chat.WebBlazorServer.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace Chat.WebBlazorServer.Components.Pages;
 
@@ -17,7 +16,8 @@ public partial class Home : ComponentBase
     [Inject]
     public required NavigationManager Navigation { get; set; }
 
-    private ChatModel chatModel = new ChatModel("You are a friendly AI chatbot that helps users answers questions. Always format response using markdown");
+    private ChatModel chatModel = new ChatModel(
+        systemMessage: "Você é uma AI amigável que ajuda os usuários com suas perguntas.Sempre responda em português e formate a resposta em markdown.");
     private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 

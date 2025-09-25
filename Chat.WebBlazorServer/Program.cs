@@ -1,4 +1,5 @@
 using Chat.WebBlazorServer.Components;
+using Chat.WebBlazorServer.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
@@ -15,6 +16,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor(); // Adiciona o serviço IHttpContextAccessor
 
 
 // Híbrido inútil
@@ -27,8 +29,13 @@ builder.Services.AddControllers();
 // });
 
 
-///
-builder.Services.AddKernel();
+
+
+///Adiciona o Semantic Kernel 
+var kernelBuilder = builder.Services.AddKernel();
+
+//Registrando os plugins
+kernelBuilder.Plugins.AddFromType<GetDateTime>();
 
 var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
 var endpoint = config["AzureOpenAI:Endpoint"] ?? throw new ArgumentNullException("AzureOpenAI:Endpoint not found in configuration.");

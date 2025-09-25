@@ -12,8 +12,11 @@
     <HeadOutlet />
 </head>
 
+@inject IHttpContextAccessor HttpContextAccessor
 <body>
-    <Routes />
+    <CascadingValue Value="HttpContextAccessor.HttpContext">
+        <Routes />
+    </CascadingValue>
     <script src="_framework/blazor.server.js"></script>
     <script src="js/app.js"></script>
 </body>
