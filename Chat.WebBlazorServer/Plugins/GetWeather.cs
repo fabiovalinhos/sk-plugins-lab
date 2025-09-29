@@ -49,6 +49,7 @@ namespace Chat.WebBlazorServer.Plugins
         }
     }
 }
+
 // Exception has occurred: CLR/System.Net.Http.HttpRequestException
 // An exception of type 'System.Net.Http.HttpRequestException' occurred in System.Private.CoreLib.dll but was not handled in user code: 'Response status code does not indicate success: 404 (Not Found).'
 //    at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()

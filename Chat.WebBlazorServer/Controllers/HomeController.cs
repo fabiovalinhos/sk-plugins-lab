@@ -45,7 +45,5 @@ namespace Chat.WebBlazorServer.Controllers
                 return StatusCode(500, $"Erro ao comunicar com o serviço de IA. {ex.Message}");
             }
         }
-
-
     }
 }
