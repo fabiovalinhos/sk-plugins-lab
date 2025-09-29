@@ -36,6 +36,8 @@ var kernelBuilder = builder.Services.AddKernel();
 
 //Registrando os plugins
 kernelBuilder.Plugins.AddFromType<GetDateTime>();
+kernelBuilder.Plugins.AddFromType<GetWeather>();
+
 
 var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
 var endpoint = config["AzureOpenAI:Endpoint"] ?? throw new ArgumentNullException("AzureOpenAI:Endpoint not found in configuration.");

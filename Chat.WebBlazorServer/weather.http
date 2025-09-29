@@ -1,0 +1,12 @@
+
+### Autin, TX
+### Get the weather forecast for Austin, TX from the National Weather Service API
+
+GET https://api.weather.gov/points/30.2650,-97.7466
+Accept: application/geo+json
+User-Agent: myapplication-udemy-course
+
+###
+GET https://api.weather.gov/gridpoints/EWX/156,91/forecast
+Accept: application/geo+json
+User-Agent: myapplication-udemy-course
