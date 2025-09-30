@@ -49,15 +49,3 @@ namespace Chat.WebBlazorServer.Plugins
         }
     }
 }
-
-// Exception has occurred: CLR/System.Net.Http.HttpRequestException
-// An exception of type 'System.Net.Http.HttpRequestException' occurred in System.Private.CoreLib.dll but was not handled in user code: 'Response status code does not indicate success: 404 (Not Found).'
-//    at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
-//    at Chat.WebBlazorServer.Plugins.GetWeather.<GetForecastURL>d__3.MoveNext() in /Users/fabiovilalba/Documents/SK_Plugins/Chat.WebBlazorServer/Plugins/GetWeather.cs:line 40
-//    at Chat.WebBlazorServer.Plugins.GetWeather.<GetWeatherPointAsync>d__2.MoveNext() in /Users/fabiovilalba/Documents/SK_Plugins/Chat.WebBlazorServer/Plugins/GetWeather.cs:line 19
-//    at Microsoft.SemanticKernel.KernelFunctionFromMethod.<>c.<<GetReturnValueMarshalerDelegate>b__25_4>d.MoveNext()
-//    at System.Runtime.CompilerServices.ConfiguredValueTaskAwaitable`1.ConfiguredValueTaskAwaiter.GetResult()
-//    at Microsoft.SemanticKernel.KernelFunction.<>c__DisplayClass32_0.<<InvokeAsync>b__0>d.MoveNext()
-//    at Microsoft.SemanticKernel.Kernel.<InvokeFilterOrFunctionAsync>d__34.MoveNext()
-//    at Microsoft.SemanticKernel.Kernel.<OnFunctionInvocationAsync>d__33.MoveNext()
-//    at Microsoft.SemanticKernel.KernelFunction.<InvokeAsync>d__32.MoveNext()

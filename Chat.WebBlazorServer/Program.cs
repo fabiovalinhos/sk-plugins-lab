@@ -37,6 +37,8 @@ var kernelBuilder = builder.Services.AddKernel();
 //Registrando os plugins
 kernelBuilder.Plugins.AddFromType<GetDateTime>();
 kernelBuilder.Plugins.AddFromType<GetWeather>();
+kernelBuilder.Plugins.AddFromType<GetGeoCoordinates>();
+kernelBuilder.Plugins.AddFromType<PersonalInfo>();
 
 
 var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
