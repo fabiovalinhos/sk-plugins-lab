@@ -41,6 +41,20 @@ kernelBuilder.Plugins.AddFromType<GetGeoCoordinates>();
 kernelBuilder.Plugins.AddFromType<PersonalInfo>();
 
 
+//Obtendo a API externa como um plugin. Não consigo usar o kernelBuilder para isso
+//Tenho que usar o buidder services collection para criar um kernel instanciado
+//para isso
+var kernel =
+builder.Services.BuildServiceProvider().GetRequiredService<Kernel>();
+
+var kernelPlugin = await kernel.ImportPluginFromOpenApiAsync(
+pluginName: "customers",
+uri: new Uri("https://localhost:7287/swagger/v1/swagger.json")
+);
+
+builder.Services.AddSingleton(kernelPlugin);
+
+
 var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
 var endpoint = config["AzureOpenAI:Endpoint"] ?? throw new ArgumentNullException("AzureOpenAI:Endpoint not found in configuration.");
 var apikey = config["AzureOpenAI:ApiKey"] ?? throw new ArgumentNullException("AzureOpenAI:ApiKey not found in configuration.");
@@ -49,7 +63,7 @@ builder.Services.AddAzureOpenAIChatCompletion(modelid, endpoint, apikey);
 
 FunctionChoiceBehaviorOptions options = new()
 {
-    AllowConcurrentInvocation = false
+    AllowConcurrentInvocation = true
 };
 
 builder.Services.AddTransient<PromptExecutionSettings>(_ => new
