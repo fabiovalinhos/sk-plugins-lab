@@ -1,4 +1,6 @@
 using Customer.API.Services;
+using System.Reflection; 
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +15,10 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "A simple example ASP.NET Core Web API"
     });
-    
+
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 
 // Add services to the container.
