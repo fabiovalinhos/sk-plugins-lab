@@ -2,6 +2,8 @@ using Chat.WebBlazorServer.Components;
 using Chat.WebBlazorServer.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using ModelContextProtocol.Client;
+using ModelContextProtocol.Server;
 
 
 var config = new ConfigurationBuilder()
@@ -34,6 +36,11 @@ builder.Services.AddHttpContextAccessor(); // Adiciona o serviço IHttpContextAc
 ///Adiciona o Semantic Kernel 
 var kernelBuilder = builder.Services.AddKernel();
 
+/// Adiciona MCP Servers
+await AddFileSystemMcpServerAsync(kernelBuilder);
+
+
+
 //Registrando os plugins
 kernelBuilder.Plugins.AddFromType<GetDateTime>();
 kernelBuilder.Plugins.AddFromType<GetWeather>();
@@ -44,15 +51,15 @@ kernelBuilder.Plugins.AddFromType<PersonalInfo>();
 //Obtendo a API externa como um plugin. Não consigo usar o kernelBuilder para isso
 //Tenho que usar o buidder services collection para criar um kernel instanciado
 //para isso
-var kernel =
-builder.Services.BuildServiceProvider().GetRequiredService<Kernel>();
+// var kernel =
+// builder.Services.BuildServiceProvider().GetRequiredService<Kernel>();
 
-var kernelPlugin = await kernel.ImportPluginFromOpenApiAsync(
-pluginName: "customers",
-uri: new Uri("https://localhost:7287/swagger/v1/swagger.json")
-);
+// var kernelPlugin = await kernel.ImportPluginFromOpenApiAsync(
+// pluginName: "customers",
+// uri: new Uri("https://localhost:7287/swagger/v1/swagger.json")
+// );
 
-builder.Services.AddSingleton(kernelPlugin);
+// builder.Services.AddSingleton(kernelPlugin);
 
 
 var modelid = config["AzureOpenAI:DeploymentName"] ?? string.Empty;
@@ -97,3 +104,19 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+
+static async Task AddFileSystemMcpServerAsync(IKernelBuilder kernelBuilder)
+{
+    IMcpClient mcpClient = await McpClientFactory.CreateAsync(new StdioClientTransport(new()
+    {
+        Name = "FileSystem",
+        Command = "npx",
+        Arguments = ["-y", "@modelcontextprotocol/server-filesystem", "/Users/fabiovilalba/Documents/SK_Plugins/Chat.WebBlazorServer/data"]
+    }));
+
+    IList<McpClientTool> tools = await mcpClient.ListToolsAsync();
+
+    kernelBuilder.Plugins.AddFromFunctions("FS",
+    tools.Select(skFunc => skFunc.AsKernelFunction()));
+}
