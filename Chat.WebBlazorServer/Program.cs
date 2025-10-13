@@ -3,7 +3,6 @@ using Chat.WebBlazorServer.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using ModelContextProtocol.Client;
-using ModelContextProtocol.Server;
 
 
 var config = new ConfigurationBuilder()
