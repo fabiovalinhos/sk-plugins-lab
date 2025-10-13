@@ -39,7 +39,6 @@ var kernelBuilder = builder.Services.AddKernel();
 await AddFileSystemMcpServerAsync(kernelBuilder);
 
 
-
 //Registrando os plugins
 kernelBuilder.Plugins.AddFromType<GetDateTime>();
 kernelBuilder.Plugins.AddFromType<GetWeather>();
@@ -50,6 +49,9 @@ kernelBuilder.Plugins.AddFromType<PersonalInfo>();
 //Obtendo a API externa como um plugin. Não consigo usar o kernelBuilder para isso
 //Tenho que usar o buidder services collection para criar um kernel instanciado
 //para isso
+//
+//A solução aqui não é a ideal, tem uma maneira correta de fazer isso com IHostServices
+//
 // var kernel =
 // builder.Services.BuildServiceProvider().GetRequiredService<Kernel>();
 
@@ -111,10 +113,13 @@ static async Task AddFileSystemMcpServerAsync(IKernelBuilder kernelBuilder)
     {
         Name = "FileSystem",
         Command = "npx",
-        Arguments = ["-y", "@modelcontextprotocol/server-filesystem", "/Users/fabiovilalba/Documents/SK_Plugins/Chat.WebBlazorServer/data"]
+        Arguments = ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\FabioVilalba\\Documents\\sk-plugins-lab\\Chat.WebBlazorServer\\data"]
     }));
 
-    IList<McpClientTool> tools = await mcpClient.ListToolsAsync();
+    // O compilador sugere usar McpClient.ListToolsAsync. Como mcpClient é IMcpClient,
+    // e existe um cast explícito para McpClient (a implementação concreta),
+    // faremos o cast para chamar o método de instância não obsoleto.
+    IList<McpClientTool> tools = await ((McpClient)mcpClient).ListToolsAsync();
 
     kernelBuilder.Plugins.AddFromFunctions("FS",
     tools.Select(skFunc => skFunc.AsKernelFunction()));
