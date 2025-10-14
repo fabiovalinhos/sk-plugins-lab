@@ -3,6 +3,7 @@ using Chat.WebBlazorServer.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using ModelContextProtocol.Client;
+using ModelContextProtocol;
 
 
 var config = new ConfigurationBuilder()
@@ -37,6 +38,7 @@ var kernelBuilder = builder.Services.AddKernel();
 
 /// Adiciona MCP Servers
 await AddFileSystemMcpServerAsync(kernelBuilder);
+await AddGitHubMcpServer(kernelBuilder, config["GH_PAT"] ?? string.Empty);
 
 
 //Registrando os plugins
@@ -109,18 +111,33 @@ app.Run();
 
 static async Task AddFileSystemMcpServerAsync(IKernelBuilder kernelBuilder)
 {
-    IMcpClient mcpClient = await McpClientFactory.CreateAsync(new StdioClientTransport(new()
+    McpClient mcpClient = await McpClient.CreateAsync(new StdioClientTransport(new()
     {
         Name = "FileSystem",
         Command = "npx",
         Arguments = ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\FabioVilalba\\Documents\\sk-plugins-lab\\Chat.WebBlazorServer\\data"]
     }));
 
-    // O compilador sugere usar McpClient.ListToolsAsync. Como mcpClient é IMcpClient,
-    // e existe um cast explícito para McpClient (a implementação concreta),
-    // faremos o cast para chamar o método de instância não obsoleto.
-    IList<McpClientTool> tools = await ((McpClient)mcpClient).ListToolsAsync();
+    IList<McpClientTool> tools = await mcpClient.ListToolsAsync();
 
     kernelBuilder.Plugins.AddFromFunctions("FS",
+    tools.Select(skFunc => skFunc.AsKernelFunction()));
+}
+
+static async Task AddGitHubMcpServer(IKernelBuilder kernelBuilder, string PAT)
+{
+    McpClient mcpClient = await McpClient.CreateAsync(new HttpClientTransport(new()
+    {
+        Name = "GitHub",
+        Endpoint = new Uri("https://api.githubcopilot.com/mcp/"),
+        AdditionalHeaders = new Dictionary<string, string>
+        {
+            ["Authorization"] = $"Bearer {PAT}"
+        }
+    }));
+
+    IList<McpClientTool> tools = await mcpClient.ListToolsAsync();
+
+    kernelBuilder.Plugins.AddFromFunctions("GH",
     tools.Select(skFunc => skFunc.AsKernelFunction()));
 }
