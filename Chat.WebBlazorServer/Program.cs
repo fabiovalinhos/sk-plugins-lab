@@ -1,9 +1,10 @@
+using Azure;
+using Azure.Search.Documents.Indexes;
 using Chat.WebBlazorServer.Components;
 using Chat.WebBlazorServer.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using ModelContextProtocol.Client;
-using ModelContextProtocol;
 
 
 var config = new ConfigurationBuilder()
@@ -47,6 +48,9 @@ kernelBuilder.Plugins.AddFromType<GetWeather>();
 kernelBuilder.Plugins.AddFromType<GetGeoCoordinates>();
 kernelBuilder.Plugins.AddFromType<PersonalInfo>();
 
+//RAG: Adicionando o plugin Manual de Conduta
+kernelBuilder.Plugins.AddFromType<ManualConduta>();
+
 
 //Obtendo a API externa como um plugin. Não consigo usar o kernelBuilder para isso
 //Tenho que usar o buidder services collection para criar um kernel instanciado
@@ -70,6 +74,32 @@ var endpoint = config["AzureOpenAI:Endpoint"] ?? throw new ArgumentNullException
 var apikey = config["AzureOpenAI:ApiKey"] ?? throw new ArgumentNullException("AzureOpenAI:ApiKey not found in configuration.");
 
 builder.Services.AddAzureOpenAIChatCompletion(modelid, endpoint, apikey);
+
+
+////
+//RAG: Adicionando o Text Embedding Generation
+
+#pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+builder.Services.AddAzureOpenAIEmbeddingGenerator(
+    deploymentName: config["EMBEDDING_DEPLOYNAME"] ?? string.Empty,
+    endpoint: config["AI_SEARCH_ENDPOINT"] ?? string.Empty,
+    apiKey: config["AI_SEARCH_KEY"] ?? string.Empty
+    );
+#pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
+//RAG: Add AI Search Service
+
+builder.Services.AddSingleton(
+ sp => new SearchIndexClient(
+   new Uri(config["AI_SEARCH_ENDPOINT"] ?? string.Empty
+    ),
+    new AzureKeyCredential(
+        config["AI_SEARCH_KEY"] ?? string.Empty
+)));
+
+builder.Services.AddAzureAISearchVectorStore();
+////
+
 
 FunctionChoiceBehaviorOptions options = new()
 {
@@ -124,6 +154,7 @@ static async Task AddFileSystemMcpServerAsync(IKernelBuilder kernelBuilder)
     tools.Select(skFunc => skFunc.AsKernelFunction()));
 }
 
+// este mcp cria permissão para acessar os repositórios privados do github
 static async Task AddGitHubMcpServer(IKernelBuilder kernelBuilder, string PAT)
 {
     McpClient mcpClient = await McpClient.CreateAsync(new HttpClientTransport(new()
